@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -42,15 +45,11 @@ function App() {
         </button>
 
         <Routes>
-          <Route
-            path="/"
-            element={<Register />}
-          />
-          <Route
-            path="/register"
-            element={<Register />}
-          />
-
+          <Route path="/" element={<Register />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
       </div>
     </Router>
