@@ -19,6 +19,7 @@ const Profile = () => {
 
   const handleLogout = () => {
     logout();
+    navigate("/");
   };
 
   return (
@@ -54,6 +55,7 @@ const Profile = () => {
               {user.isVerified ? 'Yes' : 'No'}
             </p>
           </div>
+
           <Button
             variant="secondary"
             className="w-full mt-4"
@@ -61,6 +63,15 @@ const Profile = () => {
           >
             Edit Profile
           </Button>
+
+          <Button
+            variant="secondary"
+            className="w-full mt-2"
+            onClick={() => navigate('/')}
+          >
+            Trang chủ
+          </Button>
+
           <Button
             variant="secondary"
             className="w-full mt-2"
