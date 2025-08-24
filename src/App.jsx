@@ -5,6 +5,7 @@ import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<Register />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>

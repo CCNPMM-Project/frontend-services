@@ -26,3 +26,12 @@ export const updateProfile = async (data) => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
 };
+
+// Forgot password APIs
+export const forgotPassword = async (data) => {
+    return await api.post("/auth/forgot-password", data);
+};
+
+export const resetPassword = async (data) => {
+    return await api.post("/auth/reset-password", data);
+};
