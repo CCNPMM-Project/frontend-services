@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
+import Login from "./pages/Login";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -49,6 +50,10 @@ function App() {
           <Route
             path="/register"
             element={<Register />}
+          />
+          <Route
+            path="/login"
+            element={<Login />}
           />
 
         </Routes>
