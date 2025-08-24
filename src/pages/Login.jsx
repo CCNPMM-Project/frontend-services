@@ -49,7 +49,7 @@ const Login = () => {
           message: 'Đăng nhập thành công! Đang chuyển hướng...',
         });
 
-        navigate('/home');
+        navigate('/profile');
       } else {
         throw new Error('Dữ liệu đăng nhập không đầy đủ');
       }
