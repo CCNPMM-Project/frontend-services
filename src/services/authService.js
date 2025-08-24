@@ -11,4 +11,18 @@ export const verifyOtp = async (data) => {
 export const login = async (data) => {
     return await api.post("/auth/login", data);
 };
-export const verifyToken = () => api.get('/auth/verify');
+export const verifyToken = () => api.get('/auth/verify', {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+});
+
+export const getProfile = async () => {
+    return await api.get("/auth/profile", {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+};
+
+export const updateProfile = async (data) => {
+    return await api.post("/auth/profile", data, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+};

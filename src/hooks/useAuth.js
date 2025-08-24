@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { verifyToken } from '../services/authService';
+import { verifyToken, getProfile } from '../services/authService';
 
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,16 +19,12 @@ const useAuth = () => {
     }
 
     try {
-      const response = await verifyToken();
-
-      if (response.data && response.data.status === 200) {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          try {
-            setUser(JSON.parse(userData));
-          } catch (e) {
-            console.error('Failed to parse user data', e);
-          }
+      const verifyResponse = await verifyToken();
+      if (verifyResponse.data && verifyResponse.data.status === 200) {
+        const profileResponse = await getProfile();
+        if (profileResponse.data && profileResponse.data.data) {
+          setUser(profileResponse.data.data);
+          localStorage.setItem('user', JSON.stringify(profileResponse.data.data));
         }
         setIsAuthenticated(true);
         setLoginAttempted(true);
