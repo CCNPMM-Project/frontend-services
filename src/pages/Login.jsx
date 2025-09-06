@@ -1,134 +1,115 @@
-// Các import đã lược bỏ useAuthContext
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import Card from '../components/ui/Card';
-import Input from '../components/ui/Input';
-import Button from '../components/ui/Button';
-import Alert from '../components/ui/Alert';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
+import Alert from '../components/ui/Alert';
+import useGoogleLogin from '../components/useGoogleLogin';
 import validateLoginInputs from '../components/validateInputs';
 
-const BACKEND_URL = 'http://localhost:5000';
-
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
-  };
+  useGoogleLogin(setError, setSuccessMessage, setIsGoogleLoading);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setAlert({ show: false, type: '', message: '' });
+    setError('');
+    setSuccessMessage('');
 
-    if (!validateLoginInputs(formData.email, formData.password, (message) =>
-      setAlert({ show: true, type: 'error', message }))) {
-      return;
-    }
+    if (!validateLoginInputs(email, password, setError)) return;
 
     setIsLoading(true);
     try {
-      const response = await login(formData);
-      const { data } = response.data;
-      console.log(data)
-
-      if (data && data.token && data.user) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('email', data.user.email);
-        localStorage.setItem('userId', data.user.id);
-
+      const { data: { success, message, data } } = await login({ email, password });
+      if (success) {
+        setSuccessMessage(message || 'Đăng nhập thành công!');
+        localStorage.setItem('refreshToken', data.refreshToken);
         localStorage.setItem('user', JSON.stringify(data.user));
-
-        setAlert({
-          show: true,
-          type: 'success',
-          message: 'Đăng nhập thành công! Đang chuyển hướng...',
-        });
-
-        navigate('/');
+        localStorage.setItem('token', data.accessToken);
+        setTimeout(() => navigate('/home'), 500);
       } else {
-        throw new Error('Dữ liệu đăng nhập không đầy đủ');
+        setError(message || 'Đăng nhập thất bại!');
       }
-    } catch (error) {
-      const message = error.response?.data?.message || 'Email hoặc mật khẩu không đúng';
-      setAlert({ show: true, type: 'error', message });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Đăng nhập thất bại!');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleGoogleLogin = () => {
+    setIsGoogleLoading(true);
+    setError('');
+    window.location.href = 'http://localhost:8080/api/auth/google';
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
-          Đăng nhập
+      <Card className="max-w-md">
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100 mb-6">
+          Đăng Nhập
         </h2>
-        {alert.show && (
-          <Alert
-            type={alert.type}
-            message={alert.message}
-            onClose={() => setAlert({ ...alert, show: false })}
-            className="mb-4"
+        {successMessage && <Alert type="success" message={successMessage} />}
+        {error && <Alert type="error" message={error} />}
+        <form onSubmit={handleLogin}>
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value.trim())}
+            disabled={isLoading}
+            required
           />
-        )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Email
-            </label>
-            <Input
-              type="email"
-              name="email"
-              placeholder="Nhập email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={isLoading}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Mật khẩu
-            </label>
-            <Input
-              type="password"
-              name="password"
-              placeholder="Nhập mật khẩu"
-              value={formData.password}
-              onChange={handleChange}
-              disabled={isLoading}
-              required
-            />
-          </div>
-          <div className="text-right">
-            <Link
-              to="/forgot-password"
-              className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-            >
+          <Input
+            id="password"
+            label="Mật khẩu"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
+            required
+          />
+          <div className="mb-4 text-right">
+            <a href="/forgot-password" className="text-green-600 dark:text-green-400 hover:underline text-sm font-medium">
               Quên mật khẩu?
-            </Link>
+            </a>
           </div>
-          <Button
-            type="submit"
-            variant="primary"
-            className="w-full"
-            isLoading={isLoading}
-          >
-            Đăng nhập
-          </Button>
+          <div className="space-y-3">
+            <Button type="submit" isLoading={isLoading} className="w-full">
+              Đăng Nhập
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleGoogleLogin}
+              isLoading={isGoogleLoading}
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-1.01 7.28-2.73l-3.57-2.77c-1.02.68-2.33 1.09-3.71 1.09-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C4.01 20.39 7.69 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.69 1 4.01 3.61 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+              </svg>
+              Đăng nhập bằng Google
+            </Button>
+          </div>
         </form>
-        <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>
-            Chưa có tài khoản?{' '}
-            <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:underline">
-              Đăng ký
-            </Link>
-          </p>
-        </div>
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          Chưa có tài khoản?{' '}
+          <a href="/register" className="text-green-600 dark:text-green-400 hover:underline font-medium">
+            Đăng ký ngay
+          </a>
+        </p>
       </Card>
     </div>
   );
