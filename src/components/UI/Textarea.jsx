@@ -1,16 +1,15 @@
 import React from 'react';
 
-const Input = ({
+const Textarea = ({
   id,
   label,
-  type = 'text',
   value,
   onChange,
   disabled = false,
   required = false,
-  maxLength,
+  rows = 4,
   className = '',
-  ...props
+  ...rest // <-- gom các prop như name, placeholder, minLength
 }) => {
   return (
     <div className="flex-1">
@@ -22,19 +21,19 @@ const Input = ({
           {label}
         </label>
       )}
-      <input
+      <textarea
         id={id}
-        type={type}
         value={value}
         onChange={onChange}
         disabled={disabled}
         required={required}
-        maxLength={maxLength}
+        rows={rows}
         className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-gray-900 dark:text-gray-100 transition-colors duration-300 text-base ${className}`}
-        {...props}
+        {...rest} // <-- truyền phần còn lại ở đây
       />
     </div>
   );
 };
 
-export default Input;
+
+export default Textarea;
