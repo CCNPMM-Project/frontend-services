@@ -1,199 +1,94 @@
-import { useState } from "react";
-import { useNavigate, Link } from 'react-router-dom';
-import Card from '../components/ui/Card';
-import Input from '../components/ui/Input';
-import Button from '../components/ui/Button';
-import Alert from '../components/ui/Alert';
-import { forgotPassword, resetPassword } from "../services/authService";
-import Modal from "../components/ui/Modal";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { forgetPassword } from "../services/authService";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import Alert from "../components/ui/Alert";
 
 const ForgotPassword = () => {
-    const [formData, setFormData] = useState({ email: "" });
-    const [alert, setAlert] = useState({ show: false, type: "", message: "" });
-    const [otp, setOtp] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const validateInputs = () => {
+    if (!email) {
+      setError("Vui lòng nhập email");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Email không hợp lệ");
+      return false;
+    }
+    return true;
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
 
-        const { email } = formData;
+    if (!validateInputs()) return;
 
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            setAlert({ show: true, type: "error", message: "Định dạng email không hợp lệ." });
-            setIsLoading(false);
-            return;
-        }
+    setIsLoading(true);
+    try {
+      const response = await forgetPassword({ email });
+      const { success, message } = response.data;
 
-        try {
-            const response = await forgotPassword({ email });
-            setAlert({
-                show: true,
-                type: "success",
-                message: response.data.message || "Mã OTP đã được gửi đến email của bạn. Vui lòng kiểm tra email."
-            });
-            setIsOtpModalOpen(true);
-        } catch (error) {
-            console.error("Error:", error);
-            setAlert({
-                show: true,
-                type: "error",
-                message: error.response?.data?.message || "Không thể gửi mã OTP, vui lòng thử lại."
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      if (success) {
+        setSuccessMessage(message || "OTP đã được gửi đến email của bạn!");
+        setTimeout(() => {
+          navigate("/reset-password", { state: { email } });
+        }, 2000);
+      } else {
+        setError(response.data.error || "Gửi OTP thất bại!");
+      }
+    } catch (err) {
+      setError(
+        err.response?.data?.error ||
+          "Gửi OTP thất bại! Vui lòng thử lại."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleResetPassword = async () => {
-        if (newPassword.length < 6) {
-            setAlert({ show: true, type: "error", message: "Mật khẩu phải dài ít nhất 6 ký tự." });
-            return;
-        }
-        if (newPassword !== confirmPassword) {
-            setAlert({ show: true, type: "error", message: "Mật khẩu không khớp." });
-            return;
-        }
-
-        setIsLoading(true);
-        try {
-            const response = await resetPassword({ 
-                email: formData.email, 
-                otp, 
-                newPassword 
-            });
-            setAlert({ 
-                show: true, 
-                type: "success", 
-                message: response.data.message || "Đặt lại mật khẩu thành công!" 
-            });
-            setIsOtpModalOpen(false);
-            setTimeout(() => {
-                navigate("/login");
-            }, 2000);
-        } catch (error) {
-            console.error("Error:", error);
-            setAlert({ 
-                show: true, 
-                type: "error", 
-                message: error.response?.data?.message || "OTP không hợp lệ hoặc có lỗi xảy ra." 
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-            <Card className="p-8 w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
-                    Quên mật khẩu
-                </h2>
-                {alert.show && (
-                    <Alert
-                        type={alert.type}
-                        message={alert.message}
-                        onClose={() => setAlert({ ...alert, show: false })}
-                        className="mb-4"
-                    />
-                )}
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Email
-                        </label>
-                        <Input
-                            type="email"
-                            name="email"
-                            placeholder="Nhập email của bạn"
-                            value={formData.email}
-                            onChange={handleChange}
-                            disabled={isLoading}
-                            required
-                        />
-                    </div>
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        className="w-full"
-                        isLoading={isLoading}
-                        disabled={isLoading}
-                    >
-                        Gửi mã OTP
-                    </Button>
-                </form>
-                <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                    <p>
-                        Đã nhớ mật khẩu?{' '}
-                        <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
-                            Đăng nhập
-                        </Link>
-                    </p>
-                </div>
-            </Card>
-
-            {/* Modal nhập OTP và mật khẩu mới */}
-            {isOtpModalOpen && (
-                <Modal isOpen={isOtpModalOpen} onClose={() => setIsOtpModalOpen(false)} title="Đặt lại mật khẩu">
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Mã OTP
-                            </label>
-                            <Input
-                                type="text"
-                                placeholder="Nhập mã OTP"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Mật khẩu mới
-                            </label>
-                            <Input
-                                type="password"
-                                placeholder="Nhập mật khẩu mới"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Xác nhận mật khẩu mới
-                            </label>
-                            <Input
-                                type="password"
-                                placeholder="Nhập lại mật khẩu mới"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <Button
-                            variant="primary"
-                            className="w-full"
-                            onClick={handleResetPassword}
-                            isLoading={isLoading}
-                            disabled={isLoading}
-                        >
-                            Đặt lại mật khẩu
-                        </Button>
-                    </div>
-                </Modal>
-            )}
-        </div>
-    );
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
+      <Card className="max-w-md">
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100 mb-6">
+          Quên Mật Khẩu
+        </h2>
+        {successMessage && <Alert type="success" message={successMessage} />}
+        {error && <Alert type="error" message={error} />}
+        <form onSubmit={handleForgotPassword}>
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value.trim())}
+            disabled={isLoading}
+            required
+          />
+          <Button type="submit" isLoading={isLoading} className="w-full mt-4">
+            Gửi OTP
+          </Button>
+        </form>
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          Đã có tài khoản?{" "}
+          <a
+            href="/login"
+            className="text-green-600 dark:text-green-400 hover:underline font-medium"
+          >
+            Đăng nhập ngay
+          </a>
+        </p>
+      </Card>
+    </div>
+  );
 };
 
-export default ForgotPassword; 
+export default ForgotPassword;
