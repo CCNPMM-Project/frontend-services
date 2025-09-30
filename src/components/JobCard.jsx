@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BuildingOfficeIcon,
@@ -8,10 +8,41 @@ import {
   CalendarIcon,
   DocumentTextIcon,
   EyeIcon,
+  BookmarkIcon,
 } from "@heroicons/react/24/solid";
+import { saveJob, unsaveJob } from "../services/jobService";
 
-const JobCard = ({ job }) => {
+const JobCard = ({ job, onSaveChange }) => {
   const navigate = useNavigate();
+  const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if job is saved (you might want to get this from props or context)
+    setIsSaved(job.isSaved || false);
+  }, [job.isSaved]);
+
+  const handleSaveJob = async (e) => {
+    e.stopPropagation();
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      if (isSaved) {
+        await unsaveJob(job.id);
+        setIsSaved(false);
+        if (onSaveChange) onSaveChange(job.id, false);
+      } else {
+        await saveJob(job.id);
+        setIsSaved(true);
+        if (onSaveChange) onSaveChange(job.id, true);
+      }
+    } catch (error) {
+      console.error("Error saving/unsaving job:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-6 hover:scale-[1.02] hover:border-green-300 dark:hover:border-green-600 transition-all duration-300">
@@ -100,6 +131,20 @@ const JobCard = ({ job }) => {
 
           {/* Actions */}
           <div className="flex sm:flex-col items-center sm:items-end gap-2 mt-4 sm:mt-0">
+            <button
+              onClick={handleSaveJob}
+              disabled={isLoading}
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                isSaved
+                  ? "text-yellow-600 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+              } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <BookmarkIcon className={`w-5 h-5 ${isSaved ? "fill-current" : ""}`} />
+              <span className="text-sm font-medium">
+                {isLoading ? "..." : isSaved ? "Đã lưu" : "Lưu"}
+              </span>
+            </button>
             <button
               onClick={() => navigate(`/jobs/${job.id}`)}
               className="flex items-center justify-center gap-2 px-4 py-2 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900 rounded-lg transition-all duration-200"

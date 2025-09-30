@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import JobCard from "../components/JobCard";
-import SearchBar from "../components/SearchBar";
-import { useFilter } from "../contexts/FilterContext";
-import { getAllJobs } from "../services/jobService";
+import { getSavedJobs } from "../services/jobService";
 
-const Jobs = () => {
+const SavedJobs = () => {
   const [user, setUser] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,7 +12,6 @@ const Jobs = () => {
   const [hasMore, setHasMore] = useState(true);
   const jobsPerPage = 10;
   const navigate = useNavigate();
-  const { filter } = useFilter();
   const isLoadingRef = useRef(false);
 
   useEffect(() => {
@@ -36,13 +33,13 @@ const Jobs = () => {
     }
   }, [navigate]);
 
-  const fetchJobs = useCallback(async (page = 1, reset = false) => {
+  const fetchSavedJobs = useCallback(async (page = 1, reset = false) => {
     if (isLoadingRef.current) return;
     
     isLoadingRef.current = true;
     setIsLoading(true);
     try {
-      const response = await getAllJobs(page, jobsPerPage);
+      const response = await getSavedJobs(page, jobsPerPage);
       if (response.data.success) {
         const formattedJobs = response.data.data.map((job) => ({
           id: job._id,
@@ -56,7 +53,7 @@ const Jobs = () => {
           companyAvatar: job.company.avatarUrl,
           category: job.category || "",
           experienceLevel: job.experienceLevel || "",
-          isSaved: false, // This will be updated when we check saved jobs
+          isSaved: true,
         }));
 
         if (reset) {
@@ -69,7 +66,7 @@ const Jobs = () => {
         setHasMore(response.data.pagination.hasNext);
       }
     } catch (error) {
-      console.error("Error fetching jobs:", error);
+      console.error("Error fetching saved jobs:", error);
       if (reset) {
         setJobs([]);
       }
@@ -81,60 +78,24 @@ const Jobs = () => {
 
   useEffect(() => {
     if (user) {
-      fetchJobs(1, true);
+      fetchSavedJobs(1, true);
     }
-  }, [user]);
-
-  const handleSearch = () => {
-    setCurrentPage(1);
-    fetchJobs(1, true);
-  };
+  }, [user, fetchSavedJobs]);
 
   const loadMoreJobs = () => {
     if (hasMore && !isLoading) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
-      fetchJobs(nextPage, false);
+      fetchSavedJobs(nextPage, false);
     }
   };
 
   const handleSaveChange = (jobId, isSaved) => {
-    setJobs(prev => 
-      prev.map(job => 
-        job.id === jobId ? { ...job, isSaved } : job
-      )
-    );
-  };
-
-  const filteredJobs = jobs.filter((job) => {
-    const keyword = filter.keyword || "";
-    const location = filter.location || "";
-    const category = filter.category || "";
-    const type = filter.type || "";
-    const experienceLevel = filter.experienceLevel || "";
-    const salaryRange = filter.salaryRange || "";
-
-    let salaryMatch = true;
-    if (salaryRange) {
-      const [filterMin, filterMax] = salaryRange
-        .split("-")
-        .map((val) => parseInt(val || "999999999"));
-      const [jobSalaryMin, jobSalaryMax] = job.salary
-        .replace(" triệu", "")
-        .split("-")
-        .map((val) => parseFloat(val) * 1000000);
-      salaryMatch = jobSalaryMin >= filterMin && jobSalaryMax <= filterMax;
+    if (!isSaved) {
+      // If job is unsaved, remove it from the list
+      setJobs(prev => prev.filter(job => job.id !== jobId));
     }
-
-    return (
-      job.title.toLowerCase().includes(keyword.toLowerCase()) &&
-      (location === "" || job.location === location) &&
-      (category === "" || job.category === category) &&
-      (type === "" || job.type === type) &&
-      (experienceLevel === "" || job.experienceLevel === experienceLevel) &&
-      salaryMatch
-    );
-  });
+  };
 
   if (!user) {
     return (
@@ -147,15 +108,20 @@ const Jobs = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 flex flex-col">
       <main className="flex-grow px-4 sm:px-6 lg:px-8 py-12">
-
         <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Công Việc Đã Lưu
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Danh sách các công việc bạn đã lưu để xem sau
+            </p>
+          </div>
 
-                  {/* Search and Filters */}
-                  <SearchBar onSearch={handleSearch} />
           {/* Job Listings */}
           <div>
-            {filteredJobs.length > 0 ? (
-              filteredJobs.map((job) => (
+            {jobs.length > 0 ? (
+              jobs.map((job) => (
                 <JobCard 
                   key={job.id} 
                   job={job} 
@@ -163,14 +129,20 @@ const Jobs = () => {
                 />
               ))
             ) : (
-              <div className="text-center text-gray-600 dark:text-gray-400">
-                Không tìm thấy công việc nào.
+              <div className="text-center text-gray-600 dark:text-gray-400 py-12">
+                <div className="mb-4">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium mb-2">Chưa có công việc nào được lưu</h3>
+                <p>Hãy lưu những công việc bạn quan tâm để xem lại sau này.</p>
               </div>
             )}
           </div>
 
           {/* Load More Button */}
-          {hasMore && filteredJobs.length > 0 && (
+          {hasMore && jobs.length > 0 && (
             <div className="flex justify-center mt-8">
               <button
                 onClick={loadMoreJobs}
@@ -190,7 +162,7 @@ const Jobs = () => {
           )}
 
           {/* Loading indicator for initial load */}
-          {isLoading && filteredJobs.length === 0 && (
+          {isLoading && jobs.length === 0 && (
             <div className="flex justify-center mt-8">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-500"></div>
             </div>
@@ -201,4 +173,4 @@ const Jobs = () => {
   );
 };
 
-export default Jobs;
+export default SavedJobs;

@@ -5,7 +5,8 @@ export const createJob = (data) =>
     headers: { "Content-Type": "application/json" },
   });
 
-export const getAllJobs = () => api.get("/jobs");
+export const getAllJobs = (page = 1, limit = 10) => 
+  api.get("/jobs", { params: { page, limit } });
 
 export const searchJobs = (params) => api.get("/jobs/search", { params });
 
@@ -20,3 +21,10 @@ export const updateJob = (id, data) =>
   });
 
 export const deleteJob = (id) => api.delete(`/jobs/${id}`);
+
+export const saveJob = (jobId) => api.post(`/jobs/${jobId}/save`);
+
+export const unsaveJob = (jobId) => api.delete(`/jobs/${jobId}/save`);
+
+export const getSavedJobs = (page = 1, limit = 10) => 
+  api.get("/jobs/saved", { params: { page, limit } });
