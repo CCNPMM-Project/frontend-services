@@ -7,5 +7,11 @@ export default defineConfig({
   server: {
     host: true, // hoặc '0.0.0.0' để chấp nhận mọi IP
     port: 5173
+  },
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['sockjs-client', '@stomp/stompjs']
   }
 })

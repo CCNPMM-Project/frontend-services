@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDownIcon, BuildingOffice2Icon, BriefcaseIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, BookmarkIcon, EyeIcon } from "@heroicons/react/24/solid";
+import NotificationBadge from "./NotificationBadge";
 
 const Header = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -84,9 +85,13 @@ const Header = ({ user, onLogout }) => {
         </div>
 
         {/* User Info & Actions */}
-        <div className="flex items-center lg:order-2">
+        <div className="flex items-center lg:order-2 gap-2">
           {user ? (
-            <div className="relative">
+            <>
+              {/* Notification Badge */}
+              <NotificationBadge />
+              
+              <div className="relative">
               <div
                 className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-2 py-1 transition-colors duration-200"
                 onClick={toggleDropdown}
@@ -210,6 +215,7 @@ const Header = ({ user, onLogout }) => {
                 </div>
               )}
             </div>
+            </>
           ) : (
             <div className="flex items-center space-x-2">
               <Link

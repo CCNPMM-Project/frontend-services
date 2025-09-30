@@ -22,6 +22,8 @@ import ViewResume from "./pages/ViewResume";
 import JobDetail from "./pages/JobDetail";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
 import { FilterProvider } from "./contexts/FilterContext";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
+import WebSocketTest from "./components/WebSocketTest";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -45,8 +47,9 @@ function App() {
 
   return (
     <FilterProvider>
-      <Router>
-        <div className={isDarkMode ? "dark" : ""}>
+      <WebSocketProvider>
+        <Router>
+          <div className={isDarkMode ? "dark" : ""}>
           <button
             onClick={toggleDarkMode}
             className="fixed bottom-4 right-4 flex items-center px-3 py-1 bg-green-600 text-white rounded-full hover:bg-green-700 focus:ring-2 focus:ring-green-300 dark:focus:ring-green-800 transition duration-200 shadow-md text-sm"
@@ -63,6 +66,10 @@ function App() {
               </>
             )}
           </button>
+          
+          {/* WebSocket Test Component */}
+          <WebSocketTest />
+          
           <Routes>
             <Route
               path="/login"
@@ -124,7 +131,8 @@ function App() {
             </Route>
           </Routes>
         </div>
-      </Router>
+        </Router>
+      </WebSocketProvider>
     </FilterProvider>
   );
 }
