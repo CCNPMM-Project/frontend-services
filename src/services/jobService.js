@@ -28,3 +28,12 @@ export const unsaveJob = (jobId) => api.delete(`/jobs/${jobId}/save`);
 
 export const getSavedJobs = (page = 1, limit = 10) => 
   api.get("/jobs/saved", { params: { page, limit } });
+
+export const getViewedJobs = (page = 1, limit = 10) => 
+  api.get("/jobs/viewed", { params: { page, limit } });
+
+export const getApplicationCount = (jobId) => 
+  api.get(`/jobs/${jobId}/applications/count`);
+
+export const markJobAsViewed = (jobId) => 
+  api.post(`/jobs/${jobId}/view`);

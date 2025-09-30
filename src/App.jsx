@@ -15,6 +15,7 @@ import JobList from "./pages/JobList";
 import ApplicationList from "./pages/ApplicationList";
 import MyApplications from "./pages/MyApplications";
 import SavedJobs from "./pages/SavedJobs";
+import ViewedJobs from "./pages/ViewedJobs";
 import Profile from "./pages/Profile";
 import Company from "./pages/Company";
 import ViewResume from "./pages/ViewResume";
@@ -119,6 +120,7 @@ function App() {
               <Route path="/jobs/:id" element={<JobDetail />} />
               <Route path="/my-applications" element={<MyApplications />} />
               <Route path="/saved-jobs" element={<SavedJobs />} />
+              <Route path="/viewed-jobs" element={<ViewedJobs />} />
             </Route>
           </Routes>
         </div>

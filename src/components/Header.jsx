@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDownIcon, BuildingOffice2Icon, BriefcaseIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, BookmarkIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon, BuildingOffice2Icon, BriefcaseIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, BookmarkIcon, EyeIcon } from "@heroicons/react/24/solid";
 
 const Header = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -168,6 +168,17 @@ const Header = ({ user, onLogout }) => {
                         >
                           <BookmarkIcon className="w-4 h-4" />
                           Công việc đã lưu
+                        </Link>
+                        <Link
+                          to="/viewed-jobs"
+                          onClick={() => {
+                            setIsDropdownOpen(false);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-150"
+                        >
+                          <EyeIcon className="w-4 h-4" />
+                          Công việc đã xem
                         </Link>
                       </>
                     )}

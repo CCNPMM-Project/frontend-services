@@ -54,6 +54,8 @@ const SavedJobs = () => {
           category: job.category || "",
           experienceLevel: job.experienceLevel || "",
           isSaved: true,
+          isViewed: false,
+          applicationCount: job.applicationCount || 0,
         }));
 
         if (reset) {
@@ -97,6 +99,14 @@ const SavedJobs = () => {
     }
   };
 
+  const handleViewChange = (jobId, isViewed) => {
+    setJobs(prev => 
+      prev.map(job => 
+        job.id === jobId ? { ...job, isViewed } : job
+      )
+    );
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -126,6 +136,7 @@ const SavedJobs = () => {
                   key={job.id} 
                   job={job} 
                   onSaveChange={handleSaveChange}
+                  onViewChange={handleViewChange}
                 />
               ))
             ) : (

@@ -9,18 +9,22 @@ import {
   DocumentTextIcon,
   EyeIcon,
   BookmarkIcon,
+  UserGroupIcon,
+  CheckCircleIcon,
 } from "@heroicons/react/24/solid";
-import { saveJob, unsaveJob } from "../services/jobService";
+import { saveJob, unsaveJob, markJobAsViewed } from "../services/jobService";
 
-const JobCard = ({ job, onSaveChange }) => {
+const JobCard = ({ job, onSaveChange, onViewChange }) => {
   const navigate = useNavigate();
   const [isSaved, setIsSaved] = useState(false);
+  const [isViewed, setIsViewed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Check if job is saved (you might want to get this from props or context)
+    // Check if job is saved and viewed
     setIsSaved(job.isSaved || false);
-  }, [job.isSaved]);
+    setIsViewed(job.isViewed || false);
+  }, [job.isSaved, job.isViewed]);
 
   const handleSaveJob = async (e) => {
     e.stopPropagation();
@@ -42,6 +46,19 @@ const JobCard = ({ job, onSaveChange }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleViewJob = async () => {
+    if (!isViewed) {
+      try {
+        await markJobAsViewed(job.id);
+        setIsViewed(true);
+        if (onViewChange) onViewChange(job.id, true);
+      } catch (error) {
+        console.error("Error marking job as viewed:", error);
+      }
+    }
+    navigate(`/jobs/${job.id}`);
   };
 
   return (
@@ -108,6 +125,22 @@ const JobCard = ({ job, onSaveChange }) => {
                 </p>
               </div>
             </div>
+            {/* Application Count and Status */}
+            <div className="flex flex-wrap gap-4 mt-3">
+              {job.applicationCount !== undefined && (
+                <div className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400">
+                  <UserGroupIcon className="w-4 h-4" />
+                  <span>{job.applicationCount} người ứng tuyển</span>
+                </div>
+              )}
+              {isViewed && (
+                <div className="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
+                  <CheckCircleIcon className="w-4 h-4" />
+                  <span>Đã xem</span>
+                </div>
+              )}
+            </div>
+
             {/* Tags */}
             {job.tags && (
               <div className="flex gap-2 mt-3">
@@ -146,7 +179,7 @@ const JobCard = ({ job, onSaveChange }) => {
               </span>
             </button>
             <button
-              onClick={() => navigate(`/jobs/${job.id}`)}
+              onClick={handleViewJob}
               className="flex items-center justify-center gap-2 px-4 py-2 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900 rounded-lg transition-all duration-200"
             >
               <EyeIcon className="w-5 h-5" />
