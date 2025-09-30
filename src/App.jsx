@@ -13,6 +13,7 @@ import Jobs from "./pages/Jobs";
 import PostJob from "./pages/PostJob";
 import JobList from "./pages/JobList";
 import ApplicationList from "./pages/ApplicationList";
+import MyApplications from "./pages/MyApplications";
 import Profile from "./pages/Profile";
 import Company from "./pages/Company";
 import ViewResume from "./pages/ViewResume";
@@ -102,7 +103,7 @@ function App() {
               }
             />
             <Route element={<MainLayout />}>
-            <Route path="/ui-showcase" element={<UIShowcase />} />
+              <Route path="/ui-showcase" element={<UIShowcase />} />
 
               <Route path="/home" element={<Home />} />
               <Route path="/post-job" element={<PostJob />} />
@@ -115,6 +116,7 @@ function App() {
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/view-resume" element={<ViewResume />} />
               <Route path="/jobs/:id" element={<JobDetail />} />
+              <Route path="/my-applications" element={<MyApplications />} />
             </Route>
           </Routes>
         </div>
