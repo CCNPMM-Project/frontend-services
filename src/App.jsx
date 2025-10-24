@@ -23,7 +23,10 @@ import JobDetail from "./pages/JobDetail";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
 import { FilterProvider } from "./contexts/FilterContext";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
-import WebSocketTest from "./components/WebSocketTest";
+import { NotificationProvider } from "./contexts/NotificationContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import Notifications from "./pages/Notifications";
+import JobStats from "./pages/JobStats";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -46,94 +49,98 @@ function App() {
   };
 
   return (
-    <FilterProvider>
-      <WebSocketProvider>
-        <Router>
-          <div className={isDarkMode ? "dark" : ""}>
-          <button
-            onClick={toggleDarkMode}
-            className="fixed bottom-4 right-4 flex items-center px-3 py-1 bg-green-600 text-white rounded-full hover:bg-green-700 focus:ring-2 focus:ring-green-300 dark:focus:ring-green-800 transition duration-200 shadow-md text-sm"
-          >
-            {isDarkMode ? (
-              <>
-                <SunIcon className="w-4 h-4 mr-1" />
-                Chế độ sáng
-              </>
-            ) : (
-              <>
-                <MoonIcon className="w-4 h-4 mr-1" />
-                Chế độ tối
-              </>
-            )}
-          </button>
-          
-          {/* WebSocket Test Component */}
-          <WebSocketTest />
-          
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                <PublicRoute>
-                  <Register />
-                </PublicRoute>
-              }
-            />
-            <Route
-              path="/verify-otp"
-              element={
-                <PublicRoute>
-                  <VerifyOTP />
-                </PublicRoute>
-              }
-            />
-            <Route
-              path="/forgot-password"
-              element={
-                <PublicRoute>
-                  <ForgotPassword />
-                </PublicRoute>
-              }
-            />
-            <Route
-              path="/reset-password"
-              element={
-                <PublicRoute>
-                  <ResetPassword />
-                </PublicRoute>
-              }
-            />
-            <Route element={<MainLayout />}>
-              <Route path="/ui-showcase" element={<UIShowcase />} />
+    <AuthProvider>
+      <FilterProvider>
+        <WebSocketProvider>
+          <NotificationProvider>
+            <Router>
+              <div className={isDarkMode ? "dark" : ""}>
+                <button
+                  onClick={toggleDarkMode}
+                  className="fixed bottom-4 right-4 flex items-center px-3 py-1 bg-green-600 text-white rounded-full hover:bg-green-700 focus:ring-2 focus:ring-green-300 dark:focus:ring-green-800 transition duration-200 shadow-md text-sm"
+                >
+                  {isDarkMode ? (
+                    <>
+                      <SunIcon className="w-4 h-4 mr-1" />
+                      Chế độ sáng
+                    </>
+                  ) : (
+                    <>
+                      <MoonIcon className="w-4 h-4 mr-1" />
+                      Chế độ tối
+                    </>
+                  )}
+                </button>
 
-              <Route path="/home" element={<Home />} />
-              <Route path="/post-job" element={<PostJob />} />
-              <Route path="/edit-job/:id" element={<PostJob />} />
-              <Route path="/my-jobs" element={<JobList />} />
-              <Route path="/job/:jobId/applications" element={<ApplicationList />} />
-              <Route path="/jobs" element={<Jobs />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/company" element={<Company />} />
-              <Route path="/" element={<Navigate to="/home" />} />
-              <Route path="/view-resume" element={<ViewResume />} />
-              <Route path="/jobs/:id" element={<JobDetail />} />
-              <Route path="/my-applications" element={<MyApplications />} />
-              <Route path="/saved-jobs" element={<SavedJobs />} />
-              <Route path="/viewed-jobs" element={<ViewedJobs />} />
-            </Route>
-          </Routes>
-        </div>
-        </Router>
-      </WebSocketProvider>
-    </FilterProvider>
+
+                <Routes>
+                  <Route
+                    path="/login"
+                    element={
+                      <PublicRoute>
+                        <Login />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/register"
+                    element={
+                      <PublicRoute>
+                        <Register />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/verify-otp"
+                    element={
+                      <PublicRoute>
+                        <VerifyOTP />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/forgot-password"
+                    element={
+                      <PublicRoute>
+                        <ForgotPassword />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/reset-password"
+                    element={
+                      <PublicRoute>
+                        <ResetPassword />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route element={<MainLayout />}>
+                    <Route path="/ui-showcase" element={<UIShowcase />} />
+
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/post-job" element={<PostJob />} />
+                    <Route path="/edit-job/:id" element={<PostJob />} />
+                    <Route path="/my-jobs" element={<JobList />} />
+                    <Route path="/job/:jobId/applications" element={<ApplicationList />} />
+                    <Route path="/jobs" element={<Jobs />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/company" element={<Company />} />
+                    <Route path="/" element={<Navigate to="/home" />} />
+                    <Route path="/view-resume" element={<ViewResume />} />
+                    <Route path="/jobs/:id" element={<JobDetail />} />
+                    <Route path="/my-applications" element={<MyApplications />} />
+                    <Route path="/saved-jobs" element={<SavedJobs />} />
+                    <Route path="/viewed-jobs" element={<ViewedJobs />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/job/:id/stats" element={<JobStats />} />
+                  </Route>
+                </Routes>
+              </div>
+            </Router>
+          </NotificationProvider>
+        </WebSocketProvider>
+      </FilterProvider>
+    </AuthProvider>
   );
 }
 

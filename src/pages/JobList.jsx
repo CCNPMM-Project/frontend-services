@@ -13,6 +13,7 @@ import {
   CurrencyDollarIcon,
   ClockIcon,
   EyeIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 import Alert from "../components/ui/Alert";
 
@@ -165,6 +166,10 @@ const JobList = () => {
     navigate(`/job/${jobId}/applications`);
   };
 
+  const handleViewStats = (jobId) => {
+    navigate(`/job/${jobId}/stats`);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950">
@@ -277,6 +282,13 @@ const JobList = () => {
                               title="Xem danh sách ứng viên"
                             >
                               <EyeIcon className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleViewStats(job._id)}
+                              className="p-2 text-purple-500 hover:text-purple-600 transition-colors"
+                              title="Xem thống kê"
+                            >
+                              <ChartBarIcon className="w-5 h-5" />
                             </button>
                           </div>
                         </td>

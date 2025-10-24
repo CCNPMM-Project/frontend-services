@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDownIcon, BuildingOffice2Icon, BriefcaseIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, BookmarkIcon, EyeIcon } from "@heroicons/react/24/solid";
-import NotificationBadge from "./NotificationBadge";
+import { ChevronDownIcon, BuildingOffice2Icon, BriefcaseIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, BookmarkIcon, EyeIcon, BellIcon } from "@heroicons/react/24/solid";
+import NotificationBell from "./NotificationBell";
 
 const Header = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -32,11 +32,11 @@ const Header = ({ user, onLogout }) => {
         {/* Logo/Brand */}
         <div className="flex items-center">
           <Link to="/home" className="flex items-center">
-            <img
+            {/* <img
               src="icon.png"
               className="mr-3 h-6 sm:h-9"
               alt="Jobify Logo"
-            />
+            /> */}
             <span className="text-2xl font-bold text-green-600 dark:text-green-400 cursor-pointer">
               Jobify
             </span>
@@ -88,8 +88,8 @@ const Header = ({ user, onLogout }) => {
         <div className="flex items-center lg:order-2 gap-2">
           {user ? (
             <>
-              {/* Notification Badge */}
-              <NotificationBadge />
+              {/* Notification Bell */}
+              <NotificationBell />
               
               <div className="relative">
               <div
@@ -123,6 +123,17 @@ const Header = ({ user, onLogout }) => {
                     >
                      <UserIcon className="w-4 h-4" />
                       Trang cá nhân
+                    </Link>
+                    <Link
+                      to="/notifications"
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-150"
+                    >
+                      <BellIcon className="w-4 h-4" />
+                      Thông báo
                     </Link>
                     {user.role === "recruit" && (
                       <>

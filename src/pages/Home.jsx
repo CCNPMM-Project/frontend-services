@@ -1,6 +1,7 @@
 // pages/Home.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import WelcomeSection from "../components/WelcomeSection";
 import ActionSection from "../components/ActionSection";
 
@@ -28,23 +29,35 @@ const Home = () => {
     }
   }, [navigate]);
 
-
-
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">Đang tải...</div>;
+    return (
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full"
+        />
+      </motion.div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 flex flex-col">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+    >
       {/* Main Content */}
-      <main className="flex-grow px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-4xl mx-auto">
-          <WelcomeSection user={user} />
-          <ActionSection user={user} />
-        </div>
+      <main className="flex-grow">
+        <WelcomeSection user={user} />
+        <ActionSection user={user} />
       </main>
-
-    </div>
+    </motion.div>
   );
 };
 

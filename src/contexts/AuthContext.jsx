@@ -30,4 +30,7 @@ export const useAuthContext = () => {
   return context;
 };
 
+// Export useAuth hook for backward compatibility
+export { useAuth };
+
 export default AuthContext; 

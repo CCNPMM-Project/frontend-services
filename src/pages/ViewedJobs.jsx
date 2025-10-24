@@ -187,3 +187,4 @@ const ViewedJobs = () => {
 };
 
 export default ViewedJobs;
+

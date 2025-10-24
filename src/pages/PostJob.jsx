@@ -13,11 +13,14 @@ import {
   ClockIcon,
   CalendarIcon,
   DocumentTextIcon,
+  CheckCircleIcon,
+  StarIcon,
 } from "@heroicons/react/24/outline";
 import Input from "../components/ui/Input";
 import Textarea from "../components/ui/Textarea";
 import Button from "../components/ui/Button";
 import Alert from "../components/ui/Alert";
+import DynamicInputList from "../components/ui/DynamicInputList";
 
 const PostJob = () => {
   const { id } = useParams();
@@ -670,77 +673,42 @@ const PostJob = () => {
               />
             </div>
 
-            <div className="flex gap-6">
+            {/* Yêu cầu và Phúc lợi */}
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Yêu cầu */}
-              <div className="mt-6 w-1/2">
-                <label className="text-gray-500 dark:text-gray-400 text-sm font-medium block mb-2">
-                  <DocumentTextIcon className="w-5 h-5 inline mr-1" />
-                  Yêu cầu
-                </label>
-                {job.requirements.map((req, index) => (
-                  <div key={index} className="flex items-center gap-2 mb-2">
-                    <Input
-                      className="flex-1"
-                      type="text"
-                      value={req}
-                      onChange={(e) => handleArrayChange("requirements", index, e.target.value)}
-                      placeholder={`Yêu cầu ${index + 1} (không để trống)`}
-                      disabled={isLoading}
-                    />
-                    <Button
-                      variant="danger"
-                      className="w-auto px-4 py-2 text-sm"
-                      onClick={() => removeArrayItem("requirements", index)}
-                      disabled={isLoading}
-                    >
-                      Xóa
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  onClick={() => addArrayItem("requirements")}
+              <div className="space-y-4">
+                <DynamicInputList
+                  items={job.requirements}
+                  onAdd={() => addArrayItem("requirements")}
+                  onRemove={(index) => removeArrayItem("requirements", index)}
+                  onChange={(index, value) => handleArrayChange("requirements", index, value)}
+                  placeholder="Nhập yêu cầu"
+                  addButtonText="Thêm yêu cầu"
+                  maxItems={15}
+                  minItems={1}
                   disabled={isLoading}
-                  className="w-auto px-4 py-2 text-sm"
-                >
-                  Thêm yêu cầu
-                </Button>
-
+                  label="Yêu cầu công việc"
+                  icon={CheckCircleIcon}
+                  required
+                />
               </div>
 
               {/* Phúc lợi */}
-              <div className="mt-6 w-1/2">
-                <label className="text-gray-500 dark:text-gray-400 text-sm font-medium block mb-2">
-                  <DocumentTextIcon className="w-5 h-5 inline mr-1" />
-                  Phúc lợi
-                </label>
-                {job.benefits.map((ben, index) => (
-                  <div key={index} className="flex items-center gap-2 mb-2">
-                    <Input
-                      className="flex-1"
-                      type="text"
-                      value={ben}
-                      onChange={(e) => handleArrayChange("benefits", index, e.target.value)}
-                      placeholder={`Phúc lợi ${index + 1} (không để trống)`}
-                      disabled={isLoading}
-                    />
-                    <Button
-                      variant="danger"
-                      className="w-auto px-4 py-2 text-sm"
-                      onClick={() => removeArrayItem("benefits", index)}
-                      disabled={isLoading}
-                    >
-                      Xóa
-                    </Button>
-                  </div>
-                ))}
-
-                <Button
-                  className="w-auto px-4 py-2 text-sm"
-                  onClick={() => addArrayItem("benefits")}
+              <div className="space-y-4">
+                <DynamicInputList
+                  items={job.benefits}
+                  onAdd={() => addArrayItem("benefits")}
+                  onRemove={(index) => removeArrayItem("benefits", index)}
+                  onChange={(index, value) => handleArrayChange("benefits", index, value)}
+                  placeholder="Nhập phúc lợi"
+                  addButtonText="Thêm phúc lợi"
+                  maxItems={15}
+                  minItems={1}
                   disabled={isLoading}
-                >
-                  Thêm phúc lợi
-                </Button>
+                  label="Phúc lợi"
+                  icon={StarIcon}
+                  required
+                />
               </div>
             </div>
 
