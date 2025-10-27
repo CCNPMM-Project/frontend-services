@@ -27,6 +27,7 @@ import { NotificationProvider } from "./contexts/NotificationContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import Notifications from "./pages/Notifications";
 import JobStats from "./pages/JobStats";
+import ChatbotPage from "./pages/ChatbotPage";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -133,6 +134,7 @@ function App() {
                     <Route path="/viewed-jobs" element={<ViewedJobs />} />
                     <Route path="/notifications" element={<Notifications />} />
                     <Route path="/job/:id/stats" element={<JobStats />} />
+                    <Route path="/chatbot" element={<ChatbotPage />} />
                   </Route>
                 </Routes>
               </div>

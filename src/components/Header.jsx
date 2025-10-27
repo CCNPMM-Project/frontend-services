@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDownIcon, BuildingOffice2Icon, BriefcaseIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, BookmarkIcon, EyeIcon, BellIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon, BuildingOffice2Icon, BriefcaseIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, BookmarkIcon, EyeIcon, BellIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
 import NotificationBell from "./NotificationBell";
 
 const Header = ({ user, onLogout }) => {
@@ -19,6 +19,7 @@ const Header = ({ user, onLogout }) => {
   const navLinks = [
     { to: "/home", icon: HomeIcon, label: "Trang chủ" },
     { to: "/jobs", icon: MagnifyingGlassIcon, label: "Tìm việc" },
+    { to: "/chatbot", icon: ChatBubbleLeftRightIcon, label: "Chatbot" },
     ...(user && user.role === "recruit"
       ? [
           { to: "/post-job", icon: BriefcaseIcon, label: "Tuyển dụng" },

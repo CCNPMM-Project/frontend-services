@@ -38,7 +38,7 @@ const Jobs = () => {
 
   const fetchJobs = useCallback(async (page = 1, reset = false) => {
     if (isLoadingRef.current) return;
-    
+
     isLoadingRef.current = true;
     setIsLoading(true);
     try {
@@ -66,7 +66,7 @@ const Jobs = () => {
         } else {
           setJobs(prev => [...prev, ...formattedJobs]);
         }
-        
+
         setPagination(response.data.pagination);
         setHasMore(response.data.pagination.hasNext);
       }
@@ -101,16 +101,16 @@ const Jobs = () => {
   };
 
   const handleSaveChange = (jobId, isSaved) => {
-    setJobs(prev => 
-      prev.map(job => 
+    setJobs(prev =>
+      prev.map(job =>
         job.id === jobId ? { ...job, isSaved } : job
       )
     );
   };
 
   const handleViewChange = (jobId, isViewed) => {
-    setJobs(prev => 
-      prev.map(job => 
+    setJobs(prev =>
+      prev.map(job =>
         job.id === jobId ? { ...job, isViewed } : job
       )
     );
@@ -160,15 +160,15 @@ const Jobs = () => {
 
         <div className="max-w-4xl mx-auto">
 
-                  {/* Search and Filters */}
-                  <SearchBar onSearch={handleSearch} />
+          {/* Search and Filters */}
+          <SearchBar onSearch={handleSearch} />
           {/* Job Listings */}
           <div>
             {filteredJobs.length > 0 ? (
               filteredJobs.map((job) => (
-                <JobCard 
-                  key={job.id} 
-                  job={job} 
+                <JobCard
+                  key={job.id}
+                  job={job}
                   onSaveChange={handleSaveChange}
                   onViewChange={handleViewChange}
                 />
@@ -208,6 +208,7 @@ const Jobs = () => {
           )}
         </div>
       </main>
+
     </div>
   );
 };

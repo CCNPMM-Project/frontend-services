@@ -58,7 +58,7 @@ button {
   max-width: 100%;
   margin: 0 auto;
   padding: 0;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
@@ -96,4 +96,32 @@ button {
 
 .read-the-docs {
   color: #888;
+}
+
+/* Markdown styles for chatbot */
+.markdown-container strong {
+  font-weight: 600;
+}
+
+.markdown-container em {
+  font-style: italic;
+}
+
+.markdown-container ul {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.markdown-container li {
+  margin: 0.25rem 0;
+}
+
+.markdown-container p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.markdown-container a {
+  color: #3b82f6;
+  text-decoration: underline;
 }
