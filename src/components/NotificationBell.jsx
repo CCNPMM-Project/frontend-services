@@ -45,7 +45,7 @@ const NotificationBell = () => {
         className="relative p-2 text-white hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors duration-200"
         aria-label="Thông báo"
       >
-        <BellIcon className="h-6 w-6" />
+        <BellIcon className="h-6 w-6  text-gray-700 dark:text-white" />
 
         {/* Unread Count Badge */}
         {unreadCount > 0 && (

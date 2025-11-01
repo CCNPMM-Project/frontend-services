@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  CheckIcon, 
-  TrashIcon, 
-  EyeIcon, 
+import {
+  CheckIcon,
+  TrashIcon,
+  EyeIcon,
   XMarkIcon,
   BellIcon,
   ExclamationTriangleIcon,
@@ -83,16 +83,16 @@ const NotificationDropdown = ({ onClose }) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInMinutes = Math.floor((now - date) / (1000 * 60));
-    
+
     if (diffInMinutes < 1) return 'Vừa xong';
     if (diffInMinutes < 60) return `${diffInMinutes} phút trước`;
-    
+
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) return `${diffInHours} giờ trước`;
-    
+
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) return `${diffInDays} ngày trước`;
-    
+
     return date.toLocaleDateString('vi-VN');
   };
 
@@ -111,24 +111,23 @@ const NotificationDropdown = ({ onClose }) => {
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
-        
+
         {/* Filter Tabs */}
         <div className="mt-3 flex space-x-1">
           {['all', 'application_status', 'job_match', 'new_applicant', 'system'].map((filterType) => (
             <button
               key={filterType}
               onClick={() => setFilter(filterType)}
-              className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                filter === filterType
+              className={`px-3 py-1 text-xs rounded-full transition-colors ${filter === filterType
                   ? 'bg-blue-100 text-blue-700'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                }`}
             >
               {filterType === 'all' ? 'Tất cả' : getTypeLabel(filterType)}
             </button>
           ))}
         </div>
-        
+
         {/* Action Buttons */}
         <div className="mt-3 flex space-x-2">
           <button
@@ -138,7 +137,7 @@ const NotificationDropdown = ({ onClose }) => {
             <CheckIcon className="h-4 w-4" />
             <span>Đánh dấu tất cả đã đọc</span>
           </button>
-          
+
           <button
             onClick={handleDeleteAllRead}
             className="flex items-center space-x-1 px-3 py-1 text-xs bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
@@ -165,25 +164,23 @@ const NotificationDropdown = ({ onClose }) => {
           notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                !notification.isRead ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
-              }`}
+              className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${!notification.isRead ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                }`}
             >
               <div className="flex items-start space-x-3">
                 {/* Priority Icon */}
                 <div className="flex-shrink-0 mt-1">
                   {getPriorityIcon(notification.priority)}
                 </div>
-                
+
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h4 className={`text-sm font-medium ${
-                      !notification.isRead ? 'text-gray-900' : 'text-gray-700'
-                    }`}>
+                    <h4 className={`text-sm font-medium ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'
+                      }`}>
                       {notification.title}
                     </h4>
-                    
+
                     <div className="flex items-center space-x-1">
                       {!notification.isRead && (
                         <button
@@ -194,7 +191,7 @@ const NotificationDropdown = ({ onClose }) => {
                           <EyeIcon className="h-4 w-4" />
                         </button>
                       )}
-                      
+
                       <button
                         onClick={() => handleDelete(notification.id)}
                         className="text-gray-400 hover:text-red-600 transition-colors"
@@ -204,11 +201,11 @@ const NotificationDropdown = ({ onClose }) => {
                       </button>
                     </div>
                   </div>
-                  
+
                   <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                     {notification.message}
                   </p>
-                  
+
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs text-gray-500">
                       {getTypeLabel(notification.type)}
@@ -217,18 +214,8 @@ const NotificationDropdown = ({ onClose }) => {
                       {formatTime(notification.createdAt)}
                     </span>
                   </div>
-                  
-                  {/* Action URL */}
-                  {notification.data?.actionUrl && (
-                    <div className="mt-2">
-                      <a
-                        href={notification.data.actionUrl}
-                        className="text-xs text-blue-600 hover:text-blue-800 underline"
-                      >
-                        Xem chi tiết →
-                      </a>
-                    </div>
-                  )}
+
+
                 </div>
               </div>
             </div>

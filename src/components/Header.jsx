@@ -94,7 +94,7 @@ const Header = ({ user, onLogout }) => {
               
               <div className="relative">
               <div
-                className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-2 py-1 transition-colors duration-200"
+                className="flex items-center  space-x-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-2 py-1 transition-colors duration-200"
                 onClick={toggleDropdown}
               >
                 <img

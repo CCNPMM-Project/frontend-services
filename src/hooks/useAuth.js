@@ -102,6 +102,41 @@ const useAuth = () => {
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
+  const refreshAuth = () => {
+    try {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      
+      if (storedToken && storedUser) {
+        const decoded = jwtDecode(storedToken);
+        const currentTime = Date.now() / 1000;
+        
+        if (decoded.exp > currentTime) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+          return true;
+        } else {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setToken(null);
+          setUser(null);
+          return false;
+        }
+      } else {
+        setToken(null);
+        setUser(null);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error refreshing auth:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setToken(null);
+      setUser(null);
+      return false;
+    }
+  };
+
   return {
     user,
     token,
@@ -110,7 +145,8 @@ const useAuth = () => {
     login,
     register,
     logout,
-    updateUser
+    updateUser,
+    refreshAuth
   };
 };
 

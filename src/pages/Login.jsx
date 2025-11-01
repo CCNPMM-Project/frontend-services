@@ -7,6 +7,7 @@ import Input from '../components/ui/Input';
 import Alert from '../components/ui/Alert';
 import useGoogleLogin from '../components/useGoogleLogin';
 import validateLoginInputs from '../components/validateInputs';
+import { useAuthContext } from '../contexts/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,6 +17,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const navigate = useNavigate();
+  const { refreshAuth } = useAuthContext();
 
   useGoogleLogin(setError, setSuccessMessage, setIsGoogleLoading);
 
@@ -34,6 +36,8 @@ const Login = () => {
         localStorage.setItem('refreshToken', data.refreshToken);
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('token', data.accessToken);
+        // Refresh auth context to update user state
+        refreshAuth();
         setTimeout(() => navigate('/home'), 500);
       } else {
         setError(message || 'Đăng nhập thất bại!');

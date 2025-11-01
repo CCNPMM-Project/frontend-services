@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthContext } from '../contexts/AuthContext';
 
 const useGoogleLogin = (setError, setSuccessMessage, setIsGoogleLoading) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { refreshAuth } = useAuthContext();
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -24,6 +26,8 @@ const useGoogleLogin = (setError, setSuccessMessage, setIsGoogleLoading) => {
         localStorage.setItem('token', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('user', JSON.stringify(parsedUser));
+        // Refresh auth context to update user state
+        refreshAuth();
         setSuccessMessage('Đăng nhập bằng Google thành công!');
         setTimeout(() => navigate('/home'), 500);
       } catch (error) {
@@ -31,7 +35,7 @@ const useGoogleLogin = (setError, setSuccessMessage, setIsGoogleLoading) => {
         setIsGoogleLoading(false);
       }
     }
-  }, [location, navigate, setError, setSuccessMessage, setIsGoogleLoading]);
+  }, [location, navigate, setError, setSuccessMessage, setIsGoogleLoading, refreshAuth]);
 };
 
 export default useGoogleLogin;
